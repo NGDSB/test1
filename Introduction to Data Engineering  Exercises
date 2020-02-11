@@ -1,0 +1,63 @@
+Complete the SELECT statement so it selects the first_name and the last_name in the "Customer" table. Make sure to order by the last name first and the first name second.
+Use the .head() method to show the first 3 rows of data.
+Use .info() to show some general information about data.
+
+# Complete the SELECT statement
+data = pd.read_sql("""
+SELECT first_name, last_name FROM "Customer"
+ORDER BY last_name, first_name
+""", db_engine)
+
+# Show the first 3 rows of the DataFrame
+print(data.head(3))
+
+# Show the info of the DataFrame
+print(data.info(3))
+#-------------------------
+Complete the SELECT statement, so it joins the "Customer" with the "Order" table.
+Print the id column of data. What do you see?
+
+# Complete the SELECT statement
+data = pd.read_sql("""
+SELECT * FROM "Customer"
+INNER JOIN "Order"
+ON "Order"."customer_id"="Customer"."id"
+""", db_engine)
+
+# Show the id column of data
+print(data.id)
+#------------------------
+Complete the code, so you apply take_mean_age with 1 core first, then 2 and finally 4 cores.
+
+# Function to apply a function over multiple cores
+@print_timing
+def parallel_apply(apply_func, groups, nb_cores):
+    with Pool(nb_cores) as p:
+        results = p.map(apply_func, groups)
+    return pd.concat(results)
+
+# Parallel apply using 1 core
+parallel_apply(take_mean_age, athlete_events.groupby('Year'), 1)
+
+# Parallel apply using 2 cores
+parallel_apply(take_mean_age, athlete_events.groupby('Year'), 2)
+
+# Parallel apply using 4 cores
+parallel_apply(take_mean_age, athlete_events.groupby('Year'), 4)
+#---------------------------
+Create 4 partitions of the athletes_events DataFrame using dd.from_pandas().
+If you forgot the parameters of dd.from_pandas(), check out the slides again, or type help(dd.from_pandas) in the console!
+
+Print out the mean age for each Year. Remember dask uses lazy evaluation.
+
+import dask.dataframe as dd
+
+# Set the number of pratitions
+athlete_events_dask = dd.from_pandas(athlete_events, npartitions = 4)
+
+# Calculate the mean Age per Year
+print(athlete_events_dask.groupby('Year').Age.mean().compute())
+#---------------------------
+
+
+
